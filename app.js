@@ -14,7 +14,7 @@ const getPokemon = function (index) {
 	}).done(function(data) {
 		renderPokemon(data)
 	}).fail(function(jqXHR, textStatus, errorThrown) {
-		$('.screen').append(renderError('Ocurrió un error. Por favor vuelva a intentarlo'))
+		$('.screen').html('').append(renderError('Ocurrió un error. Por favor vuelva a intentarlo'))
 	})
 
 }
