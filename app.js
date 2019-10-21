@@ -5,45 +5,18 @@ const random = function () {
 }
 
 const getPokemon = function (index) {
-	const pokemons = [
-		{
-			name: 'bulbasaur',
-			img: '001'
-		},
-		{
-			name: 'ivysaur',
-			img: '002'
-		},
-		{
-			name: 'venusaur',
-			img: '003'
-		},
-		{
-			name: 'charmander',
-			img: '004'
-		},
-		{
-			name: 'charmeleon',
-			img: '005'
-		},
-		{
-			name: 'charizard',
-			img: '006'
-		},
-		{
-			name: 'squirtle',
-			img: '006'
-		},
-		{
-			name: 'wartortle',
-			img: '008'
-		},
-		{
-			name: 'blastoise',
-			img: '009'
-		},
-	]
-	return  pokemons[index]
+	const API = 'https://pokeapi.co/api/v2/pokemon/'
+	$.ajax({
+		type: 'GET',
+		url: `${API}${index}`,
+		dataType: 'json',
+		contenType: 'application/javascript'
+	}).done(function(data) {
+		renderPokemon(data)
+	}).fail(function(jqXHR, textStatus, errorThrown) {
+		$('.screen').append(renderError('Ocurrió un error. Por favor vuelva a intentarlo'))
+	})
+
 }
 
 const randomRange = random()
@@ -51,8 +24,16 @@ const randomRange = random()
 const renderPokemon = function(pokemon) {
 	const screen = document.querySelector('.screen')
 	screen.innerHTML = ''
-	screen.appendChild(createImg(`images/${pokemon.img}.png`))
+	screen.appendChild(createImg(pokemon.sprites.front_default))
 	screen.appendChild(createName(pokemon.name))
+}
+
+const renderError = function (errorMsj) {
+	const error = document.createElement('h2')
+	const text = document.createTextNode(errorMsj)
+	error.appendChild(text)
+	error.style.color = 'red'
+	return error
 }
 
 const createImg = function(url) {
@@ -71,25 +52,24 @@ const createName = function (name) {
 }
 
 const init = function () {
-	let pokemonId = 0
-	let pokemon = getPokemon(pokemonId)
-	renderPokemon(pokemon)
+	let pokemonId = 1
+	getPokemon(pokemonId)
 
-	const btnBack = document.querySelector('#btnBack')
-	const btnNext = document.querySelector('#btnNext')
+	const $btnBack = $('#btnBack')
 
-	btnBack.addEventListener('click', function () {
-		if(pokemonId === 0)
+	$btnBack.on('click', function() {
+		if(pokemonId === 1)
 			pokemonId = 9 
-
-		renderPokemon(getPokemon(--pokemonId))
+		getPokemon(--pokemonId)
 	})
 
+
+	const btnNext = document.querySelector('#btnNext')
 	btnNext.addEventListener('click', function () {
-		if(pokemonId === 8)
+		if(pokemonId === 150)
 			pokemonId = -1
 
-		renderPokemon(getPokemon(++pokemonId))
+		getPokemon(++pokemonId)
 	})
 }
 
